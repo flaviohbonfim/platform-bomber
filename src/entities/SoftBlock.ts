@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { COLORS, TILE } from '../config';
+import { TILE } from '../config';
 
 export class SoftBlock extends Phaser.Physics.Arcade.Sprite {
   tx = 0;
@@ -50,24 +50,5 @@ export class SoftBlock extends Phaser.Physics.Arcade.Sprite {
 }
 
 export function ensureSoftBlockTexture(scene: Phaser.Scene): void {
-  if (scene.textures.exists('soft-block')) return;
-
-  const g = scene.make.graphics({ x: 0, y: 0 });
-  const s = TILE;
-
-  g.fillStyle(COLORS.soft, 1);
-  g.fillRect(0, 0, s, s);
-  g.fillStyle(COLORS.softDark, 1);
-  g.fillRect(0, s - 3, s, 3);
-  g.fillRect(s - 3, 0, 3, s);
-  g.fillStyle(COLORS.softLight, 0.5);
-  g.fillRect(1, 1, s - 4, 2);
-  // brick lines
-  g.lineStyle(1, COLORS.softDark, 0.6);
-  g.lineBetween(0, s / 2, s, s / 2);
-  g.lineBetween(s / 2, 0, s / 2, s / 2);
-  g.lineBetween(s / 3, s / 2, s / 3, s);
-
-  g.generateTexture('soft-block', s, s);
-  g.destroy();
+  void scene;
 }

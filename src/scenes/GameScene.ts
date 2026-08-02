@@ -83,11 +83,34 @@ export class GameScene extends Phaser.Scene {
 
     const def = this.levelDef;
 
+    // Sky gradient + parallax decor
     const bg = this.add.graphics();
     bg.fillGradientStyle(def.skyTop, def.skyTop, def.skyBottom, def.skyBottom, 1);
     bg.fillRect(0, 0, def.width * TILE * 2, def.height * TILE * 2);
-    bg.setScrollFactor(0.12, 0);
-    bg.setDepth(-10);
+    bg.setScrollFactor(0.08, 0);
+    bg.setDepth(-20);
+
+    // Far hills
+    if (this.textures.exists('bg-hill')) {
+      for (let i = 0; i < 6; i++) {
+        this.add
+          .image(40 + i * 90, def.height * TILE - 48, 'bg-hill')
+          .setScrollFactor(0.2, 0.05)
+          .setDepth(-15)
+          .setAlpha(0.55)
+          .setTint(def.isBoss ? 0x7f1d1d : 0xffffff);
+      }
+    }
+    // Clouds
+    if (this.textures.exists('bg-cloud') && !def.id.includes('cave') && !def.isBoss) {
+      for (let i = 0; i < 5; i++) {
+        this.add
+          .image(60 + i * 120, 40 + (i % 3) * 18, 'bg-cloud')
+          .setScrollFactor(0.12, 0)
+          .setDepth(-12)
+          .setAlpha(0.75);
+      }
+    }
 
     this.level = loadLevel(this, def);
 

@@ -42,6 +42,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
     this.setDisplaySize(PLAYER.displayWidth, PLAYER.displayHeight);
     this.setDepth(10);
+    this.setOrigin(0.5, 1);
   }
 
   getFacing(): number {
@@ -173,8 +174,16 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       body.setVelocityX(approach(body.velocity.x, 0, accel * 0.35 * dt));
     }
 
-    // Flip visual
+    // Flip visual + walk frame swap
     this.setFlipX(this.facing < 0);
+    if (!onFloor) {
+      this.setTexture('player');
+    } else if (Math.abs(body.velocity.x) > 20) {
+      const walk = Math.floor(this.scene.time.now / 120) % 2 === 0;
+      this.setTexture(walk ? 'player-walk' : 'player');
+    } else {
+      this.setTexture('player');
+    }
 
     // --- Jump (coyote + buffer) ---
     if (this.bufferTimer > 0 && this.coyoteTimer > 0 && !this.isDroppingThrough) {
@@ -266,36 +275,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   }
 }
 
-/** Create placeholder player texture (White Bomber-ish silhouette). */
+/** Textures created by SpriteFactory in Preload. */
 export function ensurePlayerTexture(scene: Phaser.Scene): void {
-  if (scene.textures.exists('player')) return;
-
-  const g = scene.make.graphics({ x: 0, y: 0 });
-  const w = PLAYER.displayWidth;
-  const h = PLAYER.displayHeight;
-
-  // Body (white helmet/suit)
-  g.fillStyle(COLORS.player, 1);
-  g.fillRoundedRect(2, 4, w - 4, h - 6, 3);
-
-  // Outline
-  g.lineStyle(1, COLORS.playerOutline, 1);
-  g.strokeRoundedRect(2, 4, w - 4, h - 6, 3);
-
-  // Visor
-  g.fillStyle(0x334155, 1);
-  g.fillRect(4, 8, w - 8, 5);
-
-  // Antenna
-  g.fillStyle(COLORS.playerAntenna, 1);
-  g.fillRect(w / 2 - 1, 0, 2, 5);
-  g.fillCircle(w / 2, 1, 2);
-
-  // Feet
-  g.fillStyle(0x0f172a, 1);
-  g.fillRect(3, h - 4, 4, 3);
-  g.fillRect(w - 7, h - 4, 4, 3);
-
-  g.generateTexture('player', w, h);
-  g.destroy();
+  void scene;
+  void COLORS;
 }

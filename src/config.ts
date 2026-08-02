@@ -39,11 +39,11 @@ export const FEEL = {
 } as const;
 
 export const PLAYER = {
-  width: 14,
-  height: 22,
-  /** Visual size (placeholder rect). */
-  displayWidth: 16,
-  displayHeight: 24,
+  width: 12,
+  height: 20,
+  /** Visual size (sprite frame 24×28). */
+  displayWidth: 24,
+  displayHeight: 28,
   /** Starting simultaneous bombs. */
   startMaxBombs: 1,
   /** Starting explosion range (tiles from center). */

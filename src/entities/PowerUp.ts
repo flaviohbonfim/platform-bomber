@@ -63,41 +63,11 @@ export class PowerUp extends Phaser.Physics.Arcade.Sprite {
 }
 
 export function ensurePowerUpTextures(scene: Phaser.Scene): void {
-  const kinds: PowerUpKind[] = ['bomb', 'fire', 'speed', 'life'];
-  for (const kind of kinds) {
-    const key = `powerup-${kind}`;
-    if (scene.textures.exists(key)) continue;
-
-    const g = scene.make.graphics({ x: 0, y: 0 });
-    const s = TILE;
-    g.fillStyle(0xf8fafc, 1);
-    g.fillRoundedRect(1, 1, s - 2, s - 2, 3);
-    g.lineStyle(1, KIND_COLOR[kind], 1);
-    g.strokeRoundedRect(1, 1, s - 2, s - 2, 3);
-    g.fillStyle(KIND_COLOR[kind], 1);
-
-    if (kind === 'bomb') {
-      g.fillCircle(s / 2, s / 2 + 1, 4);
-      g.fillStyle(COLORS.fuse, 1);
-      g.fillRect(s / 2 - 1, 3, 2, 3);
-    } else if (kind === 'fire') {
-      g.fillTriangle(s / 2, 3, s - 3, s - 3, 3, s - 3);
-      g.fillStyle(COLORS.fireCore, 1);
-      g.fillTriangle(s / 2, 7, s - 5, s - 3, 5, s - 3);
-    } else if (kind === 'speed') {
-      g.fillTriangle(4, 4, 4, s - 4, s - 3, s / 2);
-    } else {
-      g.fillCircle(5, 6, 3);
-      g.fillCircle(11, 6, 3);
-      g.fillTriangle(2, 7, 14, 7, 8, 13);
-    }
-
-    // Label hint
-    void KIND_LABEL;
-
-    g.generateTexture(key, s, s);
-    g.destroy();
-  }
+  void scene;
+  void TILE;
+  void COLORS;
+  void KIND_COLOR;
+  void KIND_LABEL;
 }
 
 /** Weighted random power-up kind. */

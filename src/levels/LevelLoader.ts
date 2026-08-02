@@ -11,60 +11,10 @@ export interface LoadedLevel {
   height: number;
 }
 
-/** Generate placeholder tile textures. */
+/** Ensure tiles exist (SpriteFactory should have run in Preload). */
 export function ensureTileTextures(scene: Phaser.Scene): void {
-  if (!scene.textures.exists('tile-hard')) {
-    const g = scene.make.graphics({ x: 0, y: 0 });
-    g.fillStyle(COLORS.hard, 1);
-    g.fillRect(0, 0, TILE, TILE);
-    g.fillStyle(COLORS.hardEdge, 1);
-    g.fillRect(0, 0, TILE, 2);
-    g.fillRect(0, TILE - 2, TILE, 2);
-    g.lineStyle(1, 0x374151, 0.5);
-    g.strokeRect(0.5, 0.5, TILE - 1, TILE - 1);
-    g.generateTexture('tile-hard', TILE, TILE);
-    g.destroy();
-  }
-
-  if (!scene.textures.exists('tile-oneway')) {
-    const g = scene.make.graphics({ x: 0, y: 0 });
-    g.fillStyle(COLORS.oneway, 1);
-    g.fillRect(0, 0, TILE, 6);
-    g.fillStyle(COLORS.onewayEdge, 1);
-    g.fillRect(0, 0, TILE, 2);
-    g.fillStyle(0xa7f3d0, 0.6);
-    for (let i = 0; i < TILE; i += 4) {
-      g.fillRect(i, 2, 2, 4);
-    }
-    g.generateTexture('tile-oneway', TILE, TILE);
-    g.destroy();
-  }
-
-  if (!scene.textures.exists('tile-empty')) {
-    const g = scene.make.graphics({ x: 0, y: 0 });
-    g.fillStyle(0x000000, 0);
-    g.fillRect(0, 0, TILE, TILE);
-    g.generateTexture('tile-empty', TILE, TILE);
-    g.destroy();
-  }
-
-  if (!scene.textures.exists('exit-door')) {
-    const g = scene.make.graphics({ x: 0, y: 0 });
-    // Door frame
-    g.fillStyle(0x334155, 1);
-    g.fillRoundedRect(2, 0, 20, 28, 2);
-    g.fillStyle(0x0f172a, 1);
-    g.fillRect(5, 4, 14, 22);
-    // Portal glow
-    g.fillStyle(0xa78bfa, 0.9);
-    g.fillEllipse(12, 15, 10, 16);
-    g.fillStyle(0xe9d5ff, 0.7);
-    g.fillEllipse(12, 15, 5, 10);
-    g.fillStyle(0xfbbf24, 1);
-    g.fillCircle(16, 16, 1.5);
-    g.generateTexture('exit-door', 24, 28);
-    g.destroy();
-  }
+  void scene;
+  void COLORS;
 }
 
 /**
@@ -88,13 +38,19 @@ export function loadLevel(scene: Phaser.Scene, def: LevelDef): LoadedLevel {
     }
   }
 
+  // Theme-specific ground tileset
+  let hardKey = 'tile-hard';
+  if (def.id.includes('w1-2')) hardKey = 'tile-hard-brick';
+  else if (def.id.includes('w1-3') || def.id.includes('boss')) hardKey = 'tile-hard-cave';
+  if (!scene.textures.exists(hardKey)) hardKey = 'tile-hard';
+
   const map = scene.make.tilemap({
     data: solidData,
     tileWidth: TILE,
     tileHeight: TILE,
   });
 
-  const solidTiles = map.addTilesetImage('tile-hard', 'tile-hard', TILE, TILE, 0, 0, 1);
+  const solidTiles = map.addTilesetImage(hardKey, hardKey, TILE, TILE, 0, 0, 1);
   if (!solidTiles) throw new Error('Failed to add solid tileset');
 
   const solidLayer = map.createLayer(0, solidTiles, 0, 0);

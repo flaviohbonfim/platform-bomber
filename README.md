@@ -1,12 +1,15 @@
-# Bomb Platform
+# Bomb Platform / platform-bomber
 
 Sidescroller de plataforma inspirado no universo visual e mecânico de Bomberman.
+
+**Repo:** https://github.com/flaviohbonfim/platform-bomber
 
 ## Stack
 
 - Phaser 3
 - TypeScript
 - Vite
+- Pixel art procedural (paleta unificada + SpriteFactory)
 
 ## Desenvolvimento
 

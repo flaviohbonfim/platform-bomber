@@ -15,31 +15,8 @@ interface CheckpointFlag {
 }
 
 export function ensureCheckpointTextures(scene: Phaser.Scene): void {
-  if (!scene.textures.exists('flag-pole')) {
-    const g = scene.make.graphics({ x: 0, y: 0 });
-    g.fillStyle(0x78716c, 1);
-    g.fillRect(6, 0, 3, 28);
-    g.fillStyle(0x57534e, 1);
-    g.fillRect(5, 26, 5, 2);
-    g.generateTexture('flag-pole', 16, 28);
-    g.destroy();
-  }
-  if (!scene.textures.exists('flag-off')) {
-    const g = scene.make.graphics({ x: 0, y: 0 });
-    g.fillStyle(0x94a3b8, 1);
-    g.fillTriangle(0, 0, 14, 5, 0, 10);
-    g.generateTexture('flag-off', 14, 12);
-    g.destroy();
-  }
-  if (!scene.textures.exists('flag-on')) {
-    const g = scene.make.graphics({ x: 0, y: 0 });
-    g.fillStyle(COLORS.fuse, 1);
-    g.fillTriangle(0, 0, 14, 5, 0, 10);
-    g.fillStyle(0xfef08a, 1);
-    g.fillCircle(4, 5, 2);
-    g.generateTexture('flag-on', 14, 12);
-    g.destroy();
-  }
+  void scene;
+  void COLORS;
 }
 
 /**

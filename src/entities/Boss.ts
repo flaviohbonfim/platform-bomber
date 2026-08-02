@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { BOSS, COLORS } from '../config';
+import { BOSS } from '../config';
 import type { Player } from './Player';
 import type { BombSystem } from '../systems/BombSystem';
 import { getAudio } from '../systems/AudioSystem';
@@ -64,29 +64,7 @@ export class Boss extends Phaser.Physics.Arcade.Sprite {
 
   static ensureTexture(scene: Phaser.Scene): void {
     if (scene.textures.exists('boss-king')) return;
-    const g = scene.make.graphics({ x: 0, y: 0 });
-    // Big black bomb body
-    g.fillStyle(COLORS.bomb, 1);
-    g.fillCircle(16, 18, 13);
-    g.fillStyle(COLORS.bombHighlight, 1);
-    g.fillCircle(11, 14, 4);
-    // Angry eyes
-    g.fillStyle(0xef4444, 1);
-    g.fillRect(9, 14, 4, 3);
-    g.fillRect(19, 14, 4, 3);
-    // Fuse
-    g.lineStyle(2, COLORS.fuse, 1);
-    g.lineBetween(16, 5, 20, 1);
-    g.fillStyle(0xfef08a, 1);
-    g.fillCircle(20, 1, 2);
-    // Crown
-    g.fillStyle(0xfbbf24, 1);
-    g.fillRect(8, 4, 16, 4);
-    g.fillTriangle(8, 4, 11, 0, 14, 4);
-    g.fillTriangle(14, 4, 16, -1, 18, 4);
-    g.fillTriangle(18, 4, 21, 0, 24, 4);
-    g.generateTexture('boss-king', 32, 32);
-    g.destroy();
+    // Preload should have generated; skip if missing
   }
 
   get hpRatio(): number {
