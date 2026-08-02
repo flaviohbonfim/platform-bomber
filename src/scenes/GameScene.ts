@@ -92,25 +92,33 @@ export class GameScene extends Phaser.Scene {
 
     // Far hills
     if (this.textures.exists('bg-hill')) {
-      for (let i = 0; i < 6; i++) {
+      for (let i = 0; i < 8; i++) {
         this.add
-          .image(40 + i * 90, def.height * TILE - 48, 'bg-hill')
-          .setScrollFactor(0.2, 0.05)
+          .image(20 + i * 100, def.height * TILE - 40, 'bg-hill')
+          .setScrollFactor(0.18, 0.04)
           .setDepth(-15)
-          .setAlpha(0.55)
-          .setTint(def.isBoss ? 0x7f1d1d : 0xffffff);
+          .setAlpha(def.isBoss ? 0.35 : 0.5)
+          .setTint(def.isBoss ? 0x7f1d1d : def.id.includes('cave') ? 0x6d28d9 : 0xffffff)
+          .setScale(1.15);
       }
     }
     // Clouds
     if (this.textures.exists('bg-cloud') && !def.id.includes('cave') && !def.isBoss) {
-      for (let i = 0; i < 5; i++) {
+      for (let i = 0; i < 6; i++) {
         this.add
-          .image(60 + i * 120, 40 + (i % 3) * 18, 'bg-cloud')
-          .setScrollFactor(0.12, 0)
+          .image(40 + i * 130, 30 + (i % 3) * 22, 'bg-cloud')
+          .setScrollFactor(0.1, 0)
           .setDepth(-12)
-          .setAlpha(0.75);
+          .setAlpha(0.8)
+          .setScale(1.1);
       }
     }
+
+    // Subtle vignette for cinematic feel
+    const vig = this.add.graphics().setScrollFactor(0).setDepth(150);
+    vig.fillStyle(0x000000, 0.28);
+    vig.fillRect(0, 0, GAME_WIDTH, 18);
+    vig.fillRect(0, GAME_HEIGHT - 14, GAME_WIDTH, 14);
 
     this.level = loadLevel(this, def);
 
@@ -179,7 +187,7 @@ export class GameScene extends Phaser.Scene {
     // Boss arena
     if (def.isBoss && def.bossSpawn) {
       const { x, y } = tileCenter(def.bossSpawn.tx, def.bossSpawn.ty);
-      this.boss = new Boss(this, x, y + TILE / 2);
+      this.boss = new Boss(this, x, y + TILE / 2 + 4);
       this.physics.add.collider(this.boss, this.level.solidLayer);
       this.physics.add.collider(this.boss, this.bombSys.softBlocks);
       this.physics.add.overlap(this.player, this.boss, () => {

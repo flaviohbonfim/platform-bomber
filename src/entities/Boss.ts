@@ -42,21 +42,24 @@ export class Boss extends Phaser.Physics.Arcade.Sprite {
 
     const body = this.body as Phaser.Physics.Arcade.Body;
     body.setAllowGravity(false);
-    body.setSize(28, 28);
-    body.setOffset(2, 4);
+    body.setSize(32, 32);
+    body.setOffset(8, 14);
     body.setCollideWorldBounds(true);
     body.setImmovable(false);
 
-    this.setDisplaySize(32, 32);
+    this.setDisplaySize(48, 48);
     this.setDepth(11);
     this.setOrigin(0.5, 1);
 
-    this.crown = scene.add.rectangle(x, y - 36, 14, 6, 0xfbbf24).setDepth(12);
+    // Crown is part of boss art; label only
+    this.crown = scene.add.rectangle(x, y - 52, 1, 1, 0xfbbf24, 0).setDepth(12);
     this.label = scene.add
-      .text(x, y - 48, 'KING BOMB', {
+      .text(x, y - 56, 'KING BOMB', {
         fontFamily: 'monospace',
-        fontSize: '9px',
+        fontSize: '10px',
         color: '#fef08a',
+        stroke: '#1a0a12',
+        strokeThickness: 3,
       })
       .setOrigin(0.5)
       .setDepth(12);
@@ -185,8 +188,8 @@ export class Boss extends Phaser.Physics.Arcade.Sprite {
     }
 
     // Sync crown/label
-    this.crown.setPosition(this.x, this.y - 36);
-    this.label.setPosition(this.x, this.y - 50);
+    this.crown.setPosition(this.x, this.y - 52);
+    this.label.setPosition(this.x, this.y - 56);
     this.label.setText(`KING BOMB  P${this.phase}`);
 
     if (this.aiState === 'intro') {

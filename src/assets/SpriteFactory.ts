@@ -2,7 +2,10 @@ import Phaser from 'phaser';
 import { P } from './palette';
 import { PixelCanvas } from './PixelCanvas';
 
-/** Generate all game textures with a cohesive professional pixel look. */
+/**
+ * Procedural fallbacks for HUD/powerups/decor.
+ * Skips keys that already exist (so polished PNGs from /assets/sprites win).
+ */
 export function generateAllSprites(scene: Phaser.Scene): void {
   genPlayer(scene);
   genBomb(scene);
