@@ -42,12 +42,12 @@ export class Boss extends Phaser.Physics.Arcade.Sprite {
 
     const body = this.body as Phaser.Physics.Arcade.Body;
     body.setAllowGravity(false);
-    body.setSize(32, 32);
-    body.setOffset(8, 14);
+    body.setSize(48, 48);
+    body.setOffset(12, 20);
     body.setCollideWorldBounds(true);
     body.setImmovable(false);
 
-    this.setDisplaySize(48, 48);
+    this.setDisplaySize(72, 72);
     this.setDepth(11);
     this.setOrigin(0.5, 1);
 

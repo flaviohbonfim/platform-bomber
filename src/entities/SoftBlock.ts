@@ -12,6 +12,7 @@ export class SoftBlock extends Phaser.Physics.Arcade.Sprite {
 
     this.setDisplaySize(TILE, TILE);
     this.setDepth(3);
+    this.setOrigin(0.5, 0.5);
 
     const body = this.body as Phaser.Physics.Arcade.StaticBody;
     body.setSize(TILE, TILE);

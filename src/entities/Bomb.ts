@@ -22,10 +22,10 @@ export class Bomb extends Phaser.Physics.Arcade.Sprite {
     const body = this.body as Phaser.Physics.Arcade.Body;
     body.setAllowGravity(false);
     body.setImmovable(true);
-    body.setSize(TILE - 4, TILE - 4);
-    body.setOffset(2, 2);
+    body.setSize(22, 22);
+    body.setOffset(3, 3);
 
-    this.setDisplaySize(TILE, TILE);
+    this.setDisplaySize(28, 28);
     this.setDepth(8);
   }
 

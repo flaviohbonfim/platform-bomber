@@ -21,11 +21,11 @@ export abstract class Enemy extends Phaser.Physics.Arcade.Sprite {
 
     const body = this.body as Phaser.Physics.Arcade.Body;
     body.setAllowGravity(false); // manual
-    body.setSize(14, 14);
-    body.setOffset(5, 8);
+    body.setSize(22, 22);
+    body.setOffset(7, 12);
     body.setCollideWorldBounds(true);
 
-    this.setDisplaySize(24, 24);
+    this.setDisplaySize(36, 36);
     this.setDepth(9);
     this.setOrigin(0.5, 1);
   }

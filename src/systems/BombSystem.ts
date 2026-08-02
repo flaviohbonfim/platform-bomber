@@ -166,6 +166,7 @@ export class BombSystem {
     this.charging = false;
     this.chargeReserved = false;
     this.clearChargeFx();
+    player.setThrowing(false);
 
     if (hold < BOMB.tapMaxTime) {
       this.tryPlant(player); // onPlant fired inside spawnPlantedBomb
@@ -178,20 +179,21 @@ export class BombSystem {
   }
 
   private ensureChargeFx(player: Player): void {
+    player.setThrowing(true);
     if (!this.heldBombFx) {
       this.heldBombFx = this.scene.add.image(player.x, player.y, 'bomb');
-      this.heldBombFx.setDisplaySize(TILE - 2, TILE - 2);
+      this.heldBombFx.setDisplaySize(24, 24);
       this.heldBombFx.setDepth(12);
     }
     this.heldBombFx.setVisible(true);
 
     if (!this.chargeBarBg) {
       this.chargeBarBg = this.scene.add
-        .rectangle(0, 0, 28, 4, 0x000000, 0.55)
+        .rectangle(0, 0, 40, 5, 0x000000, 0.55)
         .setDepth(12)
         .setOrigin(0.5, 0.5);
       this.chargeBarFg = this.scene.add
-        .rectangle(0, 0, 0, 3, COLORS.fuse, 1)
+        .rectangle(0, 0, 0, 4, COLORS.fuse, 1)
         .setDepth(13)
         .setOrigin(0, 0.5);
     }
@@ -201,19 +203,20 @@ export class BombSystem {
 
   private updateChargeFx(player: Player): void {
     if (!this.heldBombFx) return;
+    player.setThrowing(true);
     const facing = player.getFacing();
-    const handX = player.x + facing * 8;
-    const handY = player.y - 10;
+    const handX = player.x + facing * 14;
+    const handY = player.y - 28;
     this.heldBombFx.setPosition(handX, handY);
     this.heldBombFx.setFlipX(facing < 0);
     // Pulse with charge
-    const s = 1 + this.chargeRatio * 0.2;
+    const s = 1 + this.chargeRatio * 0.25;
     this.heldBombFx.setScale(s);
 
     if (this.chargeBarBg && this.chargeBarFg) {
-      this.chargeBarBg.setPosition(player.x, player.y - 22);
-      this.chargeBarFg.setPosition(player.x - 13, player.y - 22);
-      this.chargeBarFg.width = 26 * this.chargeRatio;
+      this.chargeBarBg.setPosition(player.x, player.y - 48);
+      this.chargeBarFg.setPosition(player.x - 18, player.y - 48);
+      this.chargeBarFg.width = 36 * this.chargeRatio;
       this.chargeBarFg.setFillStyle(
         this.chargeRatio > 0.85 ? 0xfef08a : COLORS.fuse,
         1,
@@ -232,6 +235,11 @@ export class BombSystem {
     this.heldBombFx?.setVisible(false);
     this.chargeBarBg?.setVisible(false);
     this.chargeBarFg?.setVisible(false);
+  }
+
+  /** Clear throw pose on player after plant/throw. */
+  clearPlayerThrowPose(player: Player): void {
+    player.setThrowing(false);
   }
 
   /**

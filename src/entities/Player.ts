@@ -20,6 +20,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   private controllable = true;
   private dead = false;
   private frozen = false;
+  /** Power Glove charge pose */
+  private throwing = false;
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y, 'player');
@@ -43,6 +45,10 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.setDisplaySize(PLAYER.displayWidth, PLAYER.displayHeight);
     this.setDepth(10);
     this.setOrigin(0.5, 1);
+  }
+
+  setThrowing(on: boolean): void {
+    this.throwing = on;
   }
 
   getFacing(): number {
@@ -174,16 +180,9 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       body.setVelocityX(approach(body.velocity.x, 0, accel * 0.35 * dt));
     }
 
-    // Flip visual + walk frame swap
+    // Flip + Bomberman-style pose / walk cycle
     this.setFlipX(this.facing < 0);
-    if (!onFloor) {
-      this.setTexture('player');
-    } else if (Math.abs(body.velocity.x) > 20) {
-      const walk = Math.floor(this.scene.time.now / 120) % 2 === 0;
-      this.setTexture(walk ? 'player-walk' : 'player');
-    } else {
-      this.setTexture('player');
-    }
+    this.updateSpritePose(onFloor, body.velocity.x, body.velocity.y);
 
     // --- Jump (coyote + buffer) ---
     if (this.bufferTimer > 0 && this.coyoteTimer > 0 && !this.isDroppingThrough) {
@@ -240,6 +239,44 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       });
     }
     this.wasOnFloor = onFloor;
+  }
+
+  private updateSpritePose(onFloor: boolean, vx: number, vy: number): void {
+    // Prefer sheet animation for walk; single textures for jump/throw/idle
+    if (this.throwing && this.scene.textures.exists('player-throw')) {
+      this.anims.stop();
+      this.setTexture('player-throw');
+      this.setDisplaySize(PLAYER.displayWidth, PLAYER.displayHeight);
+      return;
+    }
+    if (!onFloor) {
+      this.anims.stop();
+      if (this.scene.textures.exists('player-jump')) {
+        this.setTexture('player-jump');
+      } else {
+        this.setTexture('player');
+      }
+      this.setDisplaySize(PLAYER.displayWidth, PLAYER.displayHeight);
+      return;
+    }
+    if (Math.abs(vx) > 24) {
+      if (this.scene.anims.exists('bomber-walk')) {
+        if (this.anims.currentAnim?.key !== 'bomber-walk') {
+          this.play('bomber-walk', true);
+        }
+        this.setDisplaySize(PLAYER.displayWidth, PLAYER.displayHeight);
+      } else {
+        this.anims.stop();
+        const walk = Math.floor(this.scene.time.now / 100) % 2 === 0;
+        this.setTexture(walk ? 'player-walk' : 'player');
+        this.setDisplaySize(PLAYER.displayWidth, PLAYER.displayHeight);
+      }
+      return;
+    }
+    this.anims.stop();
+    this.setTexture('player');
+    this.setDisplaySize(PLAYER.displayWidth, PLAYER.displayHeight);
+    void vy;
   }
 
   private tryCornerCorrection(layer: Phaser.Tilemaps.TilemapLayer): void {

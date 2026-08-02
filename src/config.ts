@@ -1,10 +1,11 @@
 /** Global game + platformer feel knobs (tune by outcome, not magic numbers). */
 
-export const GAME_WIDTH = 640;
-export const GAME_HEIGHT = 360;
+/** Logical resolution — HD-friendly, integer-scaled on display. */
+export const GAME_WIDTH = 960;
+export const GAME_HEIGHT = 540;
 
-/** Tile size in world pixels. */
-export const TILE = 16;
+/** Tile size in world pixels (higher = more readable sprites). */
+export const TILE = 32;
 
 /** Platformer feel — derived into gravity/jump in feel.ts */
 export const FEEL = {
@@ -23,9 +24,9 @@ export const FEEL = {
   /** Near-apex gravity scale for hang. */
   apexHangMultiplier: 0.55,
   /** |vy| below this (px/s) counts as apex for hang. */
-  apexHangThreshold: 40,
-  /** Horizontal top speed (px/s). */
-  maxRunSpeed: 150,
+  apexHangThreshold: 70,
+  /** Horizontal top speed (px/s) — scaled for 32px tiles. */
+  maxRunSpeed: 260,
   /** Seconds to reach top speed on ground. */
   groundAccelTime: 0.08,
   /** Air control as fraction of ground accel. */
@@ -33,17 +34,17 @@ export const FEEL = {
   /** Ground friction when no input (multiplier applied toward 0). */
   groundFriction: 0.75,
   /** Terminal fall speed (px/s). */
-  maxFallSpeed: 420,
+  maxFallSpeed: 720,
   /** Corner correction nudge (px). */
-  cornerCorrection: 4,
+  cornerCorrection: 6,
 } as const;
 
 export const PLAYER = {
-  width: 14,
-  height: 24,
-  /** Visual size — polished AI pixel art (32×40). */
-  displayWidth: 32,
-  displayHeight: 40,
+  width: 20,
+  height: 36,
+  /** Visual size — Bomberman-inspired sprite (48×56). */
+  displayWidth: 48,
+  displayHeight: 56,
   /** Starting simultaneous bombs. */
   startMaxBombs: 1,
   /** Starting explosion range (tiles from center). */
@@ -87,20 +88,20 @@ export const POWERUP = {
 } as const;
 
 export const ENEMY = {
-  gravity: 900,
-  maxFall: 380,
-  ballomSpeed: 45,
-  onilSpeed: 70,
-  dahlSpeed: 55,
-  dahlJumpVy: -260,
+  gravity: 1400,
+  maxFall: 620,
+  ballomSpeed: 70,
+  onilSpeed: 110,
+  dahlSpeed: 85,
+  dahlJumpVy: -380,
   dahlShootCooldown: 2.2,
-  sporeSpeed: 90,
+  sporeSpeed: 140,
   sporeLife: 3.5,
 } as const;
 
 export const BOSS = {
   maxHp: 12,
-  walkSpeed: 55,
+  walkSpeed: 90,
   plantCooldown: 2.0,
   throwCooldown: 1.6,
   slamCooldown: 3.2,
@@ -122,7 +123,7 @@ export const BOMB = {
   /** Active fire duration (hit frames). */
   fireDuration: 0.4,
   /** Facing bias when planting (px). */
-  plantFacingBias: 6,
+  plantFacingBias: 12,
   /** Soft block power-up drop chance (0–1). */
   softDropChance: 0.25,
   /** Screen shake on explode. */
@@ -133,15 +134,15 @@ export const BOMB = {
   /** Hold time for full throw charge (seconds). */
   chargeFullTime: 0.85,
   /** Throw horizontal speed min/max (px/s). */
-  throwSpeedMin: 130,
-  throwSpeedMax: 290,
+  throwSpeedMin: 200,
+  throwSpeedMax: 420,
   /** Throw upward speed min/max (negative = up, px/s). */
-  throwUpMin: -150,
-  throwUpMax: -300,
+  throwUpMin: -220,
+  throwUpMax: -420,
   /** Gravity for airborne bombs (px/s²). */
-  throwGravity: 780,
+  throwGravity: 1200,
   /** Max fall speed while airborne. */
-  throwMaxFall: 400,
+  throwMaxFall: 620,
 } as const;
 
 export const COLORS = {

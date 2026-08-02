@@ -78,7 +78,7 @@ export class EnemySystem {
   spawnOne(kind: EnemyKind, tx: number, ty: number): Enemy | null {
     // Feet on bottom of cell (sprites use origin bottom-center)
     const { x, y } = tileCenter(tx, ty);
-    const footY = y + 8; // half tile-ish for 16px tiles
+    const footY = y + 16; // bottom of 32px tile
     let enemy: Enemy;
 
     switch (kind) {
