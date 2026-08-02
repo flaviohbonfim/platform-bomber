@@ -9,7 +9,7 @@ Sidescroller de plataforma inspirado no universo visual e mecânico de Bomberman
 - Phaser 3
 - TypeScript
 - Vite
-- Pixel art procedural (paleta unificada + SpriteFactory)
+- Pixel art moderno (sprites PNG profissionais + fallbacks procedurais)
 
 ## Desenvolvimento
 
