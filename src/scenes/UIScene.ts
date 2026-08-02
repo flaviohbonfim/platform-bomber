@@ -1,0 +1,171 @@
+import Phaser from 'phaser';
+import { COLORS, GAME_WIDTH, LIVES } from '../config';
+import type { RunState } from '../systems/GameState';
+
+export function ensureHudTextures(scene: Phaser.Scene): void {
+  if (!scene.textures.exists('hud-heart')) {
+    const g = scene.make.graphics({ x: 0, y: 0 });
+    g.fillStyle(0xef4444, 1);
+    g.fillCircle(4, 4, 3.5);
+    g.fillCircle(10, 4, 3.5);
+    g.fillTriangle(1, 5, 13, 5, 7, 13);
+    g.generateTexture('hud-heart', 14, 14);
+    g.destroy();
+  }
+  if (!scene.textures.exists('hud-bomb')) {
+    const g = scene.make.graphics({ x: 0, y: 0 });
+    g.fillStyle(COLORS.bomb, 1);
+    g.fillCircle(6, 7, 5);
+    g.fillStyle(COLORS.fuse, 1);
+    g.fillRect(5, 1, 2, 3);
+    g.generateTexture('hud-bomb', 12, 12);
+    g.destroy();
+  }
+  if (!scene.textures.exists('hud-fire')) {
+    const g = scene.make.graphics({ x: 0, y: 0 });
+    g.fillStyle(COLORS.fireMid, 1);
+    g.fillTriangle(6, 0, 11, 11, 1, 11);
+    g.fillStyle(COLORS.fireCore, 1);
+    g.fillTriangle(6, 4, 9, 11, 3, 11);
+    g.generateTexture('hud-fire', 12, 12);
+    g.destroy();
+  }
+}
+
+/**
+ * Parallel HUD scene: lives, bombs, fire range, score.
+ */
+export class UIScene extends Phaser.Scene {
+  private hearts: Phaser.GameObjects.Image[] = [];
+  private bombText!: Phaser.GameObjects.Text;
+  private fireText!: Phaser.GameObjects.Text;
+  private scoreText!: Phaser.GameObjects.Text;
+  private softText!: Phaser.GameObjects.Text;
+  private helpText!: Phaser.GameObjects.Text;
+
+  constructor() {
+    super({ key: 'UI', active: false });
+  }
+
+  create(): void {
+    ensureHudTextures(this);
+
+    // Hearts row
+    for (let i = 0; i < LIVES.max; i++) {
+      const heart = this.add
+        .image(10 + i * 16, 12, 'hud-heart')
+        .setScrollFactor(0)
+        .setDepth(200)
+        .setOrigin(0, 0.5);
+      this.hearts.push(heart);
+    }
+
+    const bombIcon = this.add
+      .image(10, 28, 'hud-bomb')
+      .setScrollFactor(0)
+      .setDepth(200)
+      .setOrigin(0, 0.5);
+    this.bombText = this.add
+      .text(bombIcon.x + 14, 28, 'x1', {
+        fontFamily: 'monospace',
+        fontSize: '11px',
+        color: '#e2e8f0',
+      })
+      .setScrollFactor(0)
+      .setDepth(200)
+      .setOrigin(0, 0.5);
+
+    const fireIcon = this.add
+      .image(58, 28, 'hud-fire')
+      .setScrollFactor(0)
+      .setDepth(200)
+      .setOrigin(0, 0.5);
+    this.fireText = this.add
+      .text(fireIcon.x + 14, 28, 'x1', {
+        fontFamily: 'monospace',
+        fontSize: '11px',
+        color: '#e2e8f0',
+      })
+      .setScrollFactor(0)
+      .setDepth(200)
+      .setOrigin(0, 0.5);
+
+    this.scoreText = this.add
+      .text(GAME_WIDTH - 8, 12, '0', {
+        fontFamily: 'monospace',
+        fontSize: '12px',
+        color: '#fef08a',
+      })
+      .setScrollFactor(0)
+      .setDepth(200)
+      .setOrigin(1, 0.5);
+
+    this.softText = this.add
+      .text(GAME_WIDTH - 8, 28, '', {
+        fontFamily: 'monospace',
+        fontSize: '10px',
+        color: '#fdba74',
+      })
+      .setScrollFactor(0)
+      .setDepth(200)
+      .setOrigin(1, 0.5);
+
+    this.helpText = this.add
+      .text(8, 44, 'X bomba  Z jump  |  B/F/S power-ups  |  fogo mata inimigos', {
+        fontFamily: 'monospace',
+        fontSize: '9px',
+        color: '#94a3b8',
+      })
+      .setScrollFactor(0)
+      .setDepth(200);
+
+    // Panel background
+    const panel = this.add
+      .rectangle(0, 0, GAME_WIDTH, 40, 0x000000, 0.35)
+      .setOrigin(0, 0)
+      .setScrollFactor(0)
+      .setDepth(199);
+    void panel;
+
+    this.game.events.on('hud-update', this.refresh, this);
+    this.events.on('shutdown', () => {
+      this.game.events.off('hud-update', this.refresh, this);
+    });
+
+    // Initial paint from registry
+    const state = this.registry.get('run') as RunState | undefined;
+    if (state) this.refresh({ state, softRemaining: this.registry.get('softRemaining') ?? 0 });
+  }
+
+  private refresh = (payload: {
+    state: RunState;
+    softRemaining?: number;
+    charge?: number;
+    enemies?: number;
+  }): void => {
+    const { state, softRemaining = 0, charge, enemies = 0 } = payload;
+
+    for (let i = 0; i < this.hearts.length; i++) {
+      this.hearts[i].setVisible(i < LIVES.max);
+      this.hearts[i].setAlpha(i < state.lives ? 1 : 0.2);
+      this.hearts[i].setTint(i < state.lives ? 0xffffff : 0x64748b);
+    }
+
+    this.bombText.setText(`x${state.maxBombs}`);
+    this.fireText.setText(`x${state.fireRange}`);
+    this.scoreText.setText(String(state.score).padStart(6, '0'));
+
+    const parts: string[] = [];
+    if (softRemaining > 0) parts.push(`soft ${softRemaining}`);
+    else parts.push('soft ok');
+    parts.push(`foe ${enemies}`);
+    if (state.speedStacks > 0) parts.push(`spd+${state.speedStacks}`);
+    this.softText.setText(parts.join(' · '));
+
+    if (charge !== undefined && charge > 0) {
+      this.helpText.setText(`Power Glove ${Math.round(charge * 100)}%`);
+    } else {
+      this.helpText.setText('X bomba  Z jump  |  portal roxo = sair da fase');
+    }
+  };
+}
